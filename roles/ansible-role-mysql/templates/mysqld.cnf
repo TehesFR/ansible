@@ -1,0 +1,9 @@
+[mysqld]
+pid-file = {{ mysql_pid_file }}
+socket = {{ mysql_socket }}
+datadir = {{ mysql_datadir }}
+log-error = {{ mysql_log_dir }}/error.log
+# By default we only accept connections from localhost
+bind-address = {{ mysql_bind_address }}
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0

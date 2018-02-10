@@ -1,0 +1,78 @@
+---
+
+- name: Remove default vhost in sites-enabled
+  when: apache_remove_default_vhost
+  file:
+    path: "{{ apache_conf_path }}/sites-enabled/{{ apache_default_vhost_filename }}"
+    state: absent
+  notify:
+    - restart apache
+
+- name: Create vhost user {{ vhost_user }}
+  when: apache_create_vhosts
+  user: name={{ vhost_user }}
+        home={{ vhost_directory }}/{{ vhost_servername }}
+        group=www-data
+        shell=/bin/bash
+        state=present
+
+- name: Set password for user {{ vhost_user }}
+  shell: echo {{ vhost_user }}:{{ vhost_user_ssh_password }} | chpasswd
+  changed_when: false
+
+- name: Create new vhost {{ vhost_servername }}
+  when: apache_create_vhosts
+  template:
+    src: vhost.conf
+    dest: "{{ apache_conf_path }}/sites-available/{{ vhost_servername }}.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart apache
+
+- name: Create new SSL vhost {{ vhost_servername }} (just a template)
+  when: apache_create_vhosts
+  template:
+    src: ssl-vhost.conf
+    dest: "{{ apache_conf_path }}/sites-available/{{ vhost_servername }}-le-ssl.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart apache
+
+- name: Enable vhost {{ vhost_servername }}
+  when: apache_create_vhosts
+  command: a2ensite {{ vhost_servername }}
+  args:
+    creates: "{{ apache_conf_path }}/sites-enabled/{{ vhost_servername }}.conf"
+  notify:
+    - restart apache
+
+# Change apache user when prefork is used
+- name: Change apache user when prefork is used
+  when: not with_mpm_itk
+  replace:
+    dest: "{{ apache_conf_path }}/envvars"
+    regexp: "^export APACHE_RUN_USER=www-data"
+    replace: "export APACHE_RUN_USER={{ vhost_user }}"
+  notify:
+    - restart apache
+
+- name: Create directories for {{ vhost_servername }}
+  when: apache_create_vhosts
+  file: path={{ vhost_directory }}/{{ vhost_servername }}/{{ item }} state=directory owner={{ vhost_user }} group=www-data mode=0755 recurse=yes
+  with_items:
+    - htdocs
+    - logs
+    - db
+
+- name: Copy bashrc file (Debian)
+  when: ansible_distribution == 'Debian'
+  template:
+    src: bashrc
+    dest: "{{ vhost_directory }}/{{ vhost_servername }}/.bashrc"
+    owner: "{{ vhost_user }}"
+    group: www-data
+    mode: 0644

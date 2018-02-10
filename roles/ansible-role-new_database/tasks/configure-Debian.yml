@@ -1,0 +1,15 @@
+---
+
+- name: Ensure that Python MySQLdb is installed
+  apt: name=python-mysqldb state=latest
+
+- name: Create the {{ mysql_database_name }} MySQL database
+  mysql_db: db={{ mysql_database_name }} state=present encoding=utf8
+
+- name: Create the {{ mysql_user }} MySQL user and grant privileges
+  mysql_user: >
+    name={{ mysql_user }}
+    password={{ mysql_password }}
+    priv={{ mysql_database_name }}.*:ALL
+    host={{ item }}
+  with_items: "{{ mysql_allow_from }}"

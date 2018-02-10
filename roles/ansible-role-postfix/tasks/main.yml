@@ -1,0 +1,11 @@
+---
+# Setup/install tasks
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# Configure tasks
+- include: configure-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure postfix is started and enabled at boot
+  service: name=postfix state=started enabled=yes

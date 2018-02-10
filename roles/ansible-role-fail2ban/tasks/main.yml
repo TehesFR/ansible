@@ -1,0 +1,19 @@
+---
+# Install and configure fail2ban
+- name: Install fail2ban
+  apt: pkg=fail2ban state=latest update_cache=true
+  notify:
+    - restart fail2ban
+    - restart rsyslog
+
+- name: Configure fail2ban
+  template: src={{ item }}.j2 dest=/{{ item }}
+  with_items:
+    - etc/fail2ban/jail.conf
+    - etc/fail2ban/fail2ban.conf
+  notify:
+    - restart fail2ban
+    - restart rsyslog
+
+- name: Ensure fail2ban starts on reboot
+  service: name=fail2ban state=started enabled=yes

@@ -1,0 +1,21 @@
+---
+# Include variables and define needed variables
+- name: Include OS-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+# Install MySQL
+- name: Install MySQL
+  include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# Configure MySQL
+- name: Configure MySQL
+  include: configure-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# Secure MySQL
+- name: Secure MySQL
+  include: secure-mysql.yml
+
+- name: Ensure MySQL is started and enabled on boot
+  service: "name={{ mysql_daemon }} state=started enabled=yes"

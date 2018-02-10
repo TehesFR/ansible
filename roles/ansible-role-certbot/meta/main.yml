@@ -1,0 +1,21 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: tehesfr
+  description: Certbot (for Let's Encrypt) for Debian/Ubuntu.
+  min_ansible_version: 2.1
+  platforms:
+    - name: Debian
+      versions:
+      - jessie
+    - name: Ubuntu
+      versions:
+      - xenial
+      - trusty
+  galaxy_tags:
+    - networking
+    - system
+    - web
+    - security
+    - ssl

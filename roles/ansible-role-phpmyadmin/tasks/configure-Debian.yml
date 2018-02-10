@@ -1,0 +1,26 @@
+---
+# Add vhost
+- name: Add vhost for phpmyadmin
+  template:
+    src: phpmyadmin.conf
+    dest: "/etc/apache2/sites-available/phpmyadmin.conf"
+  notify:
+    - restart apache
+
+- name: Enable vhost for phpmyadmin
+  command: a2ensite phpmyadmin.conf
+  args:
+    creates: "/etc/apache2/sites-enabled/phpmyadmin.conf"
+  notify:
+    - restart apache
+
+- name: Copy config.inc.php
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  template:
+    src: config.inc.php.j2
+    dest: "/usr/share/phpmyadmin/config.inc.php"
+    owner: www-data
+    group: www-data
+    mode: 0644
+  notify:
+    - restart apache

@@ -1,0 +1,32 @@
+---
+# Install apache2 packages
+- name: Install apache2 with mpm-itk (not Ubuntu16)
+  when: ansible_distribution_release != 'xenial' and with_mpm_itk
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - apache2
+    - apache2-utils
+    - apache2-mpm-itk
+  notify:
+    - restart apache
+
+# Install apache2 packages (Ubuntu16)
+- name: Install apache2 with mpm-itk (Ubuntu16)
+  when: ansible_distribution_release == 'xenial' and with_mpm_itk
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - apache2
+    - apache2-utils
+    - libapache2-mpm-itk
+  notify:
+    - restart apache
+
+# Install apache2 packages
+- name: Install apache2 with prefork
+  when: not with_mpm_itk
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - apache2
+    - apache2-utils
+  notify:
+    - restart apache

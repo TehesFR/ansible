@@ -1,0 +1,32 @@
+---
+# Customize php.ini file
+- name: Place PHP configuration file in place for PHP 5 (Debian)
+  when: (php_version == '5' and ansible_distribution == 'Debian')
+  template:
+    src: php.ini
+    dest: "/etc/php5/apache2/php.ini"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+# Customize php.ini file
+- name: Place PHP configuration file in place for PHP 5 (Ubuntu)
+  when: (php_version == '5' and ansible_distribution == 'Ubuntu')
+  template:
+    src: php.ini
+    dest: "/etc/php/5.6/apache2/php.ini"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+
+- name: Place PHP configuration file in place for PHP 7
+  when: "php_version == '7'"
+  template:
+    src: php.ini
+    dest: "/etc/php/7.0/apache2/php.ini"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache

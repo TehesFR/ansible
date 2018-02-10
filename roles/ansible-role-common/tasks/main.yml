@@ -1,0 +1,28 @@
+---
+# Add specified repository into sources list for htop (Ubuntu16)
+- name: Add repository for htop (Ubuntu16)
+  when: ansible_distribution_release == 'xenial'
+  apt_repository: repo='deb http://us.archive.ubuntu.com/ubuntu xenial main universe' state=present
+
+# Install common packages
+- name: Install list of common packages
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+       - htop
+       - vim
+       - git
+       - ntp
+       - sudo
+       - curl
+       - wget
+       - zip
+       - python
+       - whois
+       - lsof
+       - locate
+       - telnet
+
+# Set timezone
+- name: set timezone to {{ timezone }}
+  command: echo "{{ timezone }}" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+  changed_when: False

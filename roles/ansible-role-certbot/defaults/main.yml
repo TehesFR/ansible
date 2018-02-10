@@ -1,0 +1,6 @@
+---
+certbot_repo: https://github.com/certbot/certbot.git
+certbot_version: master
+certbot_keep_updated: yes
+
+certbot_dir: /opt/certbot

@@ -1,0 +1,3 @@
+---
+- name: Install samba
+  apt: name=samba state=installed update_cache=true

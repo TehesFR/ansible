@@ -1,0 +1,88 @@
+---
+# Add specified repository into sources list for php (Debian)
+- name: Add dotdeb repository for PHP (Debian)
+  when: ansible_distribution == 'Debian'
+  apt_repository: repo='deb http://packages.dotdeb.org jessie all' state=present
+
+# Add dotdeb key for php (Debian)
+- name: Add dotdeb key for PHP repository (Debian)
+  when: ansible_distribution == 'Debian'
+  apt_key: url=https://www.dotdeb.org/dotdeb.gpg
+
+# Add specified repository into sources list for php (Ubuntu)
+- name: Add ondrej repository for PHP (Ubuntu)
+  when: ansible_distribution == 'Ubuntu'
+  apt_repository: repo=ppa:ondrej/php state='present' update_cache=yes
+
+# Install php5 packages
+- name: Install PHP 5 with opcache (Debian)
+  when: (php_version == '5' and ansible_distribution == 'Debian')
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - php5
+    - php5-curl
+    - php5-mcrypt
+    - php-mbstring
+    - php5-gd
+    - php5-dev
+    - php5-curl
+    - php5-intl
+    - php5-json
+    - php5-mysqlnd
+    - php5-memcached
+    - php5-common
+    #- php-pear
+    - libapache2-mod-php5
+    - php-xml
+    - php-zip
+  notify:
+    - restart apache
+
+# Install php5 packages
+- name: Install PHP 5 with opcache (Ubuntu)
+  when: (php_version == '5' and ansible_distribution == 'Ubuntu')
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - php5.6
+    - php5.6-curl
+    - php5.6-mcrypt
+    - php5.6-mbstring
+    - php5.6-gd
+    - php5.6-dev
+    - php5.6-curl
+    - php5.6-intl
+    - php5.6-json
+    - php5.6-mysqlnd
+    - php5.6-memcached
+    - php5.6-common
+    - php5.6-xml
+    - php5.6-zip
+    #- php-pear
+    - libapache2-mod-php5.6
+  notify:
+    - restart apache
+
+# Install php7 packages
+- name: Install PHP 7 with opcache
+  when: "php_version == '7'"
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - php7.1
+    - php7.1-curl
+    - php7.1-mcrypt
+    - php7.1-mbstring
+    - php7.1-gd
+    - php7.1-dev
+    - php7.1-curl
+    - php7.1-intl
+    - php7.1-json
+    - php7.1-mysqlnd
+    - php7.1-memcached
+    - php7.1-common
+    - php7.1-xml
+    - php7.1-zip
+    #- php-pear
+    - php7.1-opcache
+    - libapache2-mod-php7.1
+  notify:
+    - restart apache

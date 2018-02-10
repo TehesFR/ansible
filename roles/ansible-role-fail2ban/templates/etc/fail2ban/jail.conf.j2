@@ -1,0 +1,101 @@
+[INCLUDES]
+
+#before = paths-distro.conf
+before = paths-debian.conf
+
+[DEFAULT]
+
+ignoreip = {{ fail2ban_ignoreip }}
+ignorecommand =
+bantime  = {{ fail2ban_bantime }}
+findtime  = {{ fail2ban_findtime }}
+maxretry = {{ fail2ban_maxretry }}
+
+backend = {{fail2ban_backend}}
+usedns = warn
+logencoding = auto
+enabled = false
+filter = %(__name__)s
+
+destemail = {{ fail2ban_destemail }}
+sender = root@localhost
+
+banaction = {{ fail2ban_banaction }}
+mta = {{ fail2ban_mta }}
+protocol = {{ fail2ban_protocol }}
+chain = {{ fail2ban_chain }}
+port = 0:65535
+
+# The simplest action to take: ban only
+action_ = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report to the destemail.
+action_mw = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+            %(mta)s-whois[name=%(__name__)s, dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report and relevant log lines
+# to the destemail.
+action_mwl = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             %(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
+
+# See the IMPORTANT note in action.d/xarf-login-attack for when to use this action
+#
+# ban & send a xarf e-mail to abuse contact of IP address and include relevant log lines
+# to the destemail.
+action_xarf = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             xarf-login-attack[service=%(__name__)s, sender="%(sender)s", logpath=%(logpath)s, port="%(port)s"]
+
+# ban IP on CloudFlare & send an e-mail with whois report and relevant log lines
+# to the destemail.
+action_cf_mwl = cloudflare[cfuser="%(cfemail)s", cftoken="%(cfapikey)s"]
+                %(mta)s-whois-lines[name=%(__name__)s, dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
+
+# Report block via blocklist.de fail2ban reporting service API
+#
+# See the IMPORTANT note in action.d/blocklist_de.conf for when to
+# use this action. Create a file jail.d/blocklist_de.local containing
+# [Init]
+# blocklist_de_apikey = {api key from registration]
+#
+action_blocklist_de  = blocklist_de[email="%(sender)s", service=%(filter)s, apikey="%(blocklist_de_apikey)s"]
+
+# Report ban via badips.com, and use as blacklist
+#
+# See BadIPsAction docstring in config/action.d/badips.py for
+# documentation for this action.
+#
+# NOTE: This action relies on banaction being present on start and therefore
+# should be last action defined for a jail.
+#
+action_badips = badips.py[category="%(name)s", banaction="%(banaction)s"]
+
+# Choose default action.  To change, just override value of 'action' with the
+# interpolation to the chosen action shortcut (e.g.  action_mw, action_mwl, etc) in jail.local
+# globally (section [DEFAULT]) or per specific section
+action = %(action_)s
+
+{% if fail2ban_services is iterable %}
+{% for service in fail2ban_services %}
+[{{ service.name }}]
+enabled = {{ service.enabled|default("true") }}
+port = {{ service.port }}
+filter = {{ service.filter }}
+logpath = {{ service.logpath }}
+{% if service.findtime is defined %}
+findtime = {{ service.findtime }}
+{% endif %}
+{% if service.maxretry is defined %}
+maxretry = {{ service.maxretry }}
+{% endif %}
+{% if service.protocol is defined %}
+protocol = {{ service.protocol }}
+{% endif %}
+{% if service.action is defined %}
+action = %({{ service.action }})s
+{% endif %}
+{% if service.banaction is defined %}
+banaction = {{ service.banaction }}
+{% endif %}
+
+{% endfor %}
+{% endif %}

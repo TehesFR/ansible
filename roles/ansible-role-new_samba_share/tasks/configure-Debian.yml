@@ -1,0 +1,23 @@
+---
+# Configure Samba
+- name: Add samba shared folder configuration for {{ samba_share_name }}
+  blockinfile:
+    dest: "{{ samba_config_file }}"
+    marker: ""
+    block: |
+      [{{ samba_share_name }}]
+      path={{ samba_share_path }}
+      available=yes
+      browseable=yes
+      valid users={{ samba_share_user }}
+      writable=yes
+      force user={{ samba_share_user }}
+      force group={{ samba_share_group }}
+    state: present
+  notify:
+    - restart samba
+
+- name: Create Samba Password for {{ samba_share_name }}
+  shell: "(echo {{ samba_share_user_pwd }}; echo {{ samba_share_user_pwd }}) | smbpasswd -s -a {{ samba_share_user }}"
+  notify:
+    - restart samba

@@ -1,0 +1,14 @@
+---
+# Install Nginx
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+# Configure Nginx
+- include: configure-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure Nginx has selected state and enabled on boot
+  service:
+    name: "nginx"
+    state: started
+    enabled: yes

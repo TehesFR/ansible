@@ -1,0 +1,5 @@
+---
+# Install Composer
+- name: Install latest composer
+  shell: cd /usr/src && curl -sS http://getcomposer.org/installer | php && cd /usr/src && mv composer.phar /usr/bin/composer
+  changed_when: false

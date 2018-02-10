@@ -1,0 +1,7 @@
+---
+# Setup/install tasks
+- include: setup-Debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Ensure samba is started and enabled at boot
+  service: name=smbd state=started enabled=yes

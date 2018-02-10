@@ -1,0 +1,48 @@
+---
+# Choose password for root user
+mysql_user_home: /root
+mysql_root_username: root
+mysql_root_password: mysqlroot
+
+# MySQL connection settings.
+mysql_port: "3306"
+mysql_bind_address: '0.0.0.0'
+mysql_datadir: /var/lib/mysql
+mysql_pid_file: /var/run/mysqld/mysqld.pid
+mysql_skip_name_resolve: no
+mysql_socket: /var/run/mysqld/mysqld.sock
+
+# Memory settings
+mysql_key_buffer_size: "512M"
+mysql_max_allowed_packet: "128M"
+mysql_table_open_cache: "400"
+mysql_sort_buffer_size: "2M"
+mysql_read_buffer_size: "2M"
+mysql_read_rnd_buffer_size: "8M"
+mysql_myisam_sort_buffer_size: "128M"
+mysql_thread_cache_size: "16"
+mysql_query_cache_size: "32M"
+mysql_query_cache_limit: "2M"
+mysql_max_connections: "151"
+mysql_tmp_table_size: "32M"
+mysql_max_heap_table_size: "32M"
+
+# Other settings.
+mysql_lower_case_table_names: "0"
+mysql_wait_timeout: "28800"
+
+# InnoDB settings.
+mysql_innodb_file_per_table: "1"
+mysql_innodb_buffer_pool_size: "512M"
+mysql_innodb_log_file_size: "128M"
+mysql_innodb_log_buffer_size: "16M"
+mysql_innodb_flush_log_at_trx_commit: "2"
+mysql_innodb_lock_wait_timeout: "50"
+
+# Slow query log settings.
+mysql_slow_query_log_enabled: no
+mysql_slow_query_log_file: /var/log/mysql-slow.log
+mysql_slow_query_time: "2"
+
+# mysqldump settings.
+mysql_mysqldump_max_allowed_packet: "128M"

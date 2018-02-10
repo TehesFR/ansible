@@ -1,0 +1,30 @@
+---
+- name: Check if phpmyadmin is already installed
+  stat: path=/usr/share/phpmyadmin
+  register: phpmyadmin_installed
+
+- name: Remove previous installation
+  when: (phpmyadmin_installed.stat.exists == true and phpmyadmin_upgrade == true)
+  file: path=/usr/share/phpmyadmin state=absent
+
+- name: Download the source tarball
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  get_url: url=http://files.phpmyadmin.net/phpMyAdmin/{{ phpmyadmin_version }}/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz
+           dest=/usr/share/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz
+           mode=0640
+
+- name: Unpack the source tarball
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  unarchive: src=/usr/share/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz dest=/usr/share copy=no
+
+- name: Rename phpmyadmin directory
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  command: mv /usr/share/phpMyAdmin-{{ phpmyadmin_version }}-all-languages /usr/share/phpmyadmin
+
+- name: Delete the tarball
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  file: path=/usr/share/phpMyAdmin-{{ phpmyadmin_version }}-all-languages.tar.gz state=absent
+
+- name: Change owner of phpmyadmin repository
+  when: (phpmyadmin_installed.stat.exists == false or phpmyadmin_upgrade == true)
+  file: path=/usr/share/phpmyadmin owner=www-data group=www-data

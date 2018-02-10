@@ -1,0 +1,23 @@
+---
+- name: Ensure Java8 is installed (not Ubuntu14)
+  when: ansible_distribution_release != 'trusty'
+  apt: "name=openjdk-8-jdk state=present"
+
+- name: Add repository for Java8 (Ubuntu14)
+  when: ansible_distribution_release == 'trusty'
+  apt_repository: repo='deb http://ppa.launchpad.net/openjdk-r/ppa/ubuntu trusty main' state=present
+
+- name: Ensure Java8 is installed (Ubuntu14)
+  when: ansible_distribution_release == 'trusty'
+  apt: "name=openjdk-8-jdk state=present force=yes"
+
+- name: Run Solr installation script
+  shell: >
+    {{ solr_workspace }}/{{ solr_filename }}/bin/install_solr_service.sh
+    {{ solr_workspace }}/{{ solr_filename }}.tgz
+    -i {{ solr_install_dir }}
+    -d {{ solr_home }}
+    -u {{ solr_user }}
+    -s {{ solr_service_name }}
+    -p {{ solr_port }}
+    creates={{ solr_install_path }}/bin/solr

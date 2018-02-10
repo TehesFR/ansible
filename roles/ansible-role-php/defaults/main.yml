@@ -1,0 +1,14 @@
+---
+# Choose between PHP 5 and 7
+php_version: '7'
+
+# Set initial apache state. Recommended values: `started` or `stopped`
+apache_state: started
+
+# Customize PHP settings
+php_memory_limit: "256M"
+php_max_execution_time: "60"
+php_max_input_time: "60"
+php_upload_max_filesize: "100M"
+php_post_max_size: "100M"
+php_date_timezone: "Europe/Paris"

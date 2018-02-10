@@ -1,0 +1,26 @@
+---
+# Customize my.configuration file
+- name: Customize MySQL configuration file
+  template:
+    src: my.cnf
+    dest: "{{ mysql_config_include_dir }}/mysql.cnf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify: restart mysql
+
+# Customize /etc/mysql/mysql.conf.d/mysqld.cnf file
+- name: Customize /etc/mysql/mysql.conf.d/mysqld.cnf file
+  template:
+    src: mysqld.cnf
+    dest: "/etc/mysql/mysql.conf.d/mysqld.cnf"
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify: restart mysql
+
+# Ensure MySQL Python libraries are installed
+- name: Ensure MySQL Python libraries are installed
+  apt: "name=python-mysqldb state=installed"

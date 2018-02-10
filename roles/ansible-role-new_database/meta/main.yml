@@ -1,0 +1,19 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: tehesfr
+  description: Create new MySQL database/user for Ubuntu/Debian.
+  min_ansible_version: 2.1
+  platforms:
+    - name: Debian
+      versions:
+      - jessie
+    - name: Ubuntu
+      versions:
+      - xenial
+      - trusty
+  galaxy_tags:
+    - web
+    - development
+    - database

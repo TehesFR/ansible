@@ -1,0 +1,39 @@
+---
+# Enable modules
+- name: Enable apache2 modules
+  apache2_module: name={{item}} state=present
+  with_items:
+    - rewrite
+    - expires
+    - ssl
+  notify:
+    - restart apache
+
+# Configure Apache
+- name: Configure apache2 on port {{ apache_listen_port }}
+  lineinfile:
+    dest: "{{ apache_server_root }}/ports.conf"
+    regexp: "^Listen "
+    line: "Listen {{ apache_listen_port }}"
+    state: present
+  notify:
+    - restart apache
+
+- name: Configure apache2 default virtualhost on port {{ apache_listen_port }}
+  lineinfile:
+    dest: "{{ apache_server_root }}/sites-available/000-default.conf"
+    regexp: "^<VirtualHost "
+    line: "<VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>"
+    state: present
+  notify:
+    - restart apache
+
+- name: Configure LogFormat to have x-forwarded-for IP in logs when using reverse proxy
+  when: with_reverse_proxy
+  lineinfile:
+    dest: "{{ apache_conf_path }}/apache2.conf"
+    line: 'LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined_with_forwarded_for'
+    insertafter: EOF
+    state: present
+  notify:
+    - restart apache

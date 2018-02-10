@@ -1,0 +1,11 @@
+---
+# Configure Postfix
+- name: Change postfix hostname to {{ postfix_fqdn_hostname }}
+  when: postfix_fqdn_hostname != ""
+  lineinfile:
+    dest: "{{ postfix_config_file }}"
+    regexp: "^myhostname "
+    line: "myhostname = {{ postfix_fqdn_hostname }}"
+    state: present
+  notify:
+    - restart postfix

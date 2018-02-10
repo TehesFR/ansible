@@ -1,0 +1,6 @@
+---
+phpmyadmin_version: '4.7.7'
+phpmyadmin_url: "phpmyadmin"
+mysql_host: "localhost"
+# Set this to true to upgrade to a newer version or reinstall
+phpmyadmin_upgrade: false

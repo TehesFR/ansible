@@ -1,0 +1,35 @@
+---
+# Check if mysql is already installed
+- name: Check if MySQL is already installed
+  stat: path=/etc/init.d/mysql
+  register: mysql_installed
+
+# Add key for MySQL 5.7
+- name: Add MySQL 5.7 repository key
+  when: mysql_installed.stat.exists == false
+  apt_key: url=http://repo.mysql.com/RPM-GPG-KEY-mysql state=present
+
+# Add repository for MySQL 5.7 (Debian)
+- name: Add MySQL 5.7 repository (Debian)
+  when: (mysql_installed.stat.exists == false and ansible_distribution == 'Debian')
+  apt_repository: repo='deb http://repo.mysql.com/apt/debian/ jessie mysql-5.7' state=present
+
+# Add repository for MySQL 5.7 (Ubuntu14)
+- name: Add MySQL 5.7 repository (Ubuntu14)
+  when: (mysql_installed.stat.exists == false and ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'trusty')
+  apt_repository: repo='deb http://repo.mysql.com/apt/ubuntu/ trusty mysql-5.7' state=present
+
+# Add repository for MySQL 5.7 (Ubuntu16)
+- name: Add MySQL 5.7 repository (Ubuntu16)
+  when: (mysql_installed.stat.exists == false and ansible_distribution == 'Ubuntu' and ansible_distribution_release == 'xenial')
+  apt_repository: repo='deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-5.7' state=present
+
+# Install mysql packages if not present
+- name: Install MySQL 5.7 if not present
+  when: mysql_installed.stat.exists == false
+  apt: name={{item}} state=installed update_cache=true
+  with_items:
+    - mysql-server
+    - mysql-common
+  notify:
+    - restart mysql

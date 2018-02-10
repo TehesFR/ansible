@@ -1,0 +1,15 @@
+---
+# Apache settings
+apache_listen_ip: "*"
+apache_listen_port: 80
+
+# Set initial apache state. Recommended values: `started` or `stopped`
+apache_state: started
+
+# Set to true if you have nginx reverse proxy in front of apache
+# Configure LogFormat to have x-forwarded-for IP in logs
+with_reverse_proxy: false
+
+# Set to true to switch from prefork to itk
+# Can be useful for setting up shared hosting with one ssh user per vhost
+with_mpm_itk: false

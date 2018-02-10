@@ -1,0 +1,7 @@
+---
+- name: Change Hostname
+  hostname: name={{ inventory_hostname }}
+
+- name: Change host name in /etc/hosts
+  replace: dest=/etc/hosts regexp='ubuntu' replace='{{ inventory_hostname}}' backup=yes
+

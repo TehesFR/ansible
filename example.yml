@@ -1,0 +1,39 @@
+---
+- hosts: tests
+  roles:
+    - ansible-role-common
+    #- ansible-role-change-hostname
+    - { role: ansible-role-apache, apache_remove_default_vhost: true, apache_listen_port: "8080", with_mpm_itk: false, with_reverse_proxy: true }
+    - { role: ansible-role-php, php_version: '7' }
+    - { role: ansible-role-mysql, mysql_root_password: "mysqlroot" }
+    - { role: ansible-role-phpmyadmin, phpmyadmin_version: '4.7.7' }
+    - { role: ansible-role-memcached, memcached_memory_limit: '128' }
+    - { role: ansible-role-postfix, postfix_fqdn_hostname: "mymail.local"}
+    - ansible-role-fail2ban
+    - ansible-role-composer
+    - { role: ansible-role-drush, drush_version: '8.1.16' }
+    - ansible-role-console
+    - ansible-role-pip
+    - ansible-role-docker-ce
+    - ansible-role-certbot
+    - { role: ansible-role-solr, solr_version: "6.4.2" }
+    - { role: ansible-role-new_vhost,
+              vhost_user: "test",
+              vhost_user_ssh_password: "sshpwd",
+              vhost_servername: "test.drupal.local",
+              vhost_serveralias: "*.drupal.local",
+              vhost_directory: "/var/www",
+              vhost_listen_port: "8080",
+              with_mpm_itk: false }
+    - { role: ansible-role-new_database,
+              mysql_user: "test_user",
+              mysql_database_name: "test_db",
+              mysql_password: "mysqlpwd",
+              mysql_allow_from: [ "localhost" ] }
+    - { role: ansible-role-nginx-reverse-proxy,
+              nginx_site_name: "test",
+              nginx_site_server_name: "test.drupal.local *.drupal.local",
+              nginx_site_upstream_host: "127.0.0.1",
+              nginx_site_upstream_port: "8080" }
+    - ansible-role-samba
+    - { role: ansible-role-new_samba_share, samba_share_name: 'test', samba_share_path: '/var/www/test.drupal.local', samba_share_user: 'test', samba_share_user_pwd: 'test-01!!', samba_share_group: 'test' }

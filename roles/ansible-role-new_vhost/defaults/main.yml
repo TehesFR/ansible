@@ -1,0 +1,23 @@
+---
+# Apache vhost settings
+vhost_listen_ip: "*"
+vhost_listen_port: 80
+vhost_listen_port_ssl: 443
+vhost_servername: "example.com"
+vhost_serveralias: ""
+vhost_user: "www-data"
+vhost_directory: "/var/www"
+vhost_user_ssh_password: "ChangeMeWhenYouCallTheRole"
+
+# Remove apache default vhost from sites-enabled
+apache_remove_default_vhost: true
+
+# Create new vhost using vhost.conf in templates
+apache_create_vhosts: true
+
+# Set initial apache state. Recommended values: `started` or `stopped`
+apache_state: started
+
+# Set to true to switch from prefork to itk
+# Can be useful for setting up shared hosting with one ssh user per vhost
+with_mpm_itk: false

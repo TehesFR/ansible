@@ -1,0 +1,6 @@
+---
+samba_share_name: www
+samba_share_path: /var/www
+samba_share_user: www-data
+samba_share_user_pwd: pwd
+samba_share_group: www-data
