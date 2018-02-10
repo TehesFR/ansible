@@ -1,6 +1,7 @@
 # Ansible roles
 
 Personnal set of roles to install and configure web servers when not using Docker...
+
 Please check the example.yml file and the meta/main.yml file of each role to see the OS compatibility.
 
 - apache : Install and configure Apache2
